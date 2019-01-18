@@ -5,7 +5,7 @@ const webpack = require('webpack');
 
 module.exports = {
   entry: [
-    './src/main.js'
+        './src/main.ts'
   ],
   output: {
     path: path.resolve(__dirname, './dist'),
@@ -24,6 +24,14 @@ module.exports = {
           }
         }],
         exclude: /node_modules/,
+      },
+      {
+        test: /\.tsx?$/,
+        loader: 'ts-loader',
+        exclude: /node_modules/,
+        options: {
+            appendTsSuffixTo: [/\.vue$/],
+        }
       },
       {
         test: /\.scss$/,
@@ -46,9 +54,10 @@ module.exports = {
     ]
   },
   resolve: {
+    extensions: ['.ts', '.tsx', '.js', '.vue', '.json'],
     alias: {
       'vue$': 'vue/dist/vue.common.js'
-    }
+    },
   },
   devServer: {
     historyApiFallback: true,
