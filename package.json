@@ -26,6 +26,7 @@
     "nodemon": "~1.11.0"
   },
   "devDependencies": {
+    "@types/moment-timezone": "^0.5.10",
     "babel-core": "~6.26.0",
     "babel-loader": "~6.4.1",
     "babel-plugin-transform-es2015-destructuring": "~6.23.0",

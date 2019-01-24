@@ -1,9 +1,11 @@
 <template>
 	<div class="main">
-		<movie-list :filter="active_filters"></movie-list>
+		<movie-list :filter="active_genre_filters" :time_filter="active_time_filters"></movie-list>
 		<div id="movie-filter">
-			<h2>Filter results</h2>
+			<h2>Filter by Genre</h2>
 			<movie-filter :filters="this.genres" @filter-changed="onGenreChanged"></movie-filter>
+			<h2>Filter By Showing</h2>
+			<movie-filter :filters="times" @filter-changed="onTimeChanged"></movie-filter>
 		</div>
 	</div>
 </template>
@@ -24,16 +26,21 @@
         }
 	})
     export default class extends Vue {
-		active_filters = [];
+		active_genre_filters = [];
 		genres = Genres;
 		times = Times;
+		active_time_filters = [];
 
         get genre() {
                 return []
             }
 
         onGenreChanged( filter ) {
-            this.active_filters = filter;
+            this.active_genre_filters = filter;
+        }
+
+        onTimeChanged( filter ) {
+            this.active_time_filters = filter;
         }
     }
 </script>
