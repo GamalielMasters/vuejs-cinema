@@ -94,7 +94,7 @@ class RatingFilter implements Filter {
 }
 
 
-class CombinedFilter implements Filter {
+export class CombinedFilter implements Filter {
     filters : Filter[] = [];
 
     add( filter: Filter ) {
@@ -200,6 +200,8 @@ export class CombinedAnyFilter extends CombinedFilter {
 
 
 export class DateFilter implements Filter {
+    currentDay: Moment = moment.utc();
+
     get name() : string {
         return "Today";
     }
@@ -215,7 +217,15 @@ export class DateFilter implements Filter {
 
 
     match_session(sess: Session): boolean {
-        return moment.utc(sess.time).isSame( moment.utc(), 'day');
+        return moment.utc(sess.time).isSame( this.currentDay, 'day');
+    }
+
+    get Date() : Moment {
+        return this.currentDay;
+    }
+
+    set Date( newDate: Moment ) {
+        this.currentDay = newDate;
     }
 }
 
