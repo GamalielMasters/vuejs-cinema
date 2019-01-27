@@ -198,6 +198,27 @@ export class CombinedAnyFilter extends CombinedFilter {
     }
 }
 
+
+export class DateFilter implements Filter {
+    get name() : string {
+        return "Today";
+    }
+
+    match(movie: MovieListing): boolean {
+        for( let session of movie.sessions ){
+            if( this.match_session( session ) ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    match_session(sess: Session): boolean {
+        return moment.utc(sess.time).isSame( moment.utc(), 'day');
+    }
+}
+
 export const GenreFilters = [
     new GenreFilter( "Animation", "Animation" ),
     new GenreFilter( "Comedy", "Comedy" ),

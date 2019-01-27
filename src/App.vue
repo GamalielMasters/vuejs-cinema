@@ -15,7 +15,14 @@
 <script lang="ts">
     import Vue from 'vue';
     import {Component} from 'vue-property-decorator';
-    import {CombinedAllFilter, CombinedAnyFilter, GenreFilters, RatingFilters, TimeFilters} from "./util/filters";
+    import {
+        CombinedAllFilter,
+        CombinedAnyFilter,
+        DateFilter,
+        GenreFilters,
+        RatingFilters,
+        TimeFilters
+    } from "./util/filters";
 
     import MovieList from './MovieList.vue';
     import MovieFilter from './MovieFilter.vue';
@@ -31,6 +38,7 @@
 		active_genre_filter = new CombinedAllFilter();
 		active_showing_filter = new CombinedAnyFilter();
 		active_rating_filter = new CombinedAnyFilter();
+		active_date_filter = new DateFilter();
 
 		Genres = GenreFilters;
 		Times = TimeFilters;
@@ -64,6 +72,7 @@
         }
 
         created(){
+            this.active_filter.add( this.active_date_filter );
             this.active_filter.add( this.active_genre_filter );
             this.active_filter.add( this.active_rating_filter );
             this.active_filter.add( this.active_showing_filter );

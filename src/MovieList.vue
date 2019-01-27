@@ -12,7 +12,6 @@ A (potentially filtered) list of movies.
     import Vue from "vue";
     import Component from 'vue-class-component';
     import {Prop} from 'vue-property-decorator';
-    import moment from 'moment-timezone';
 
     import {Filter, MovieListing} from "./util/types";
 
@@ -38,18 +37,9 @@ A (potentially filtered) list of movies.
 		}
 
 		filter_session( movie: MovieListing ) {
-			let today = moment.utc();
-			let sessions = movie.sessions;
-
-			sessions = sessions.filter( session => {
-				return moment.utc(session.time).isSame( today, 'day');
-			});
-
-			sessions = sessions.filter( session => {
-			    return this.filter.match_session(session);
-			});
-
-			return sessions;
+			return movie.sessions.filter( session => {
+                return this.filter.match_session(session);
+            });
 		}
 
         mounted() {
