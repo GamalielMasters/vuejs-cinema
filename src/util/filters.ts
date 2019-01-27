@@ -130,6 +130,11 @@ export class CombinedAllFilter extends CombinedFilter {
     }
 
     match( movie: MovieListing ) : boolean {
+        // in the case of not having any filters, we act as a no-op... passing everything.
+        if (this.filters.length === 0 ) {
+            return true;
+        }
+
         for( let filter of this.filters ) {
             // All filters must match to result in a match, so the first filter that does *not* match ends in a non-match.
             if (!filter.match(movie)) {
@@ -141,6 +146,11 @@ export class CombinedAllFilter extends CombinedFilter {
     }
 
     match_session(sess: Session): boolean {
+        // in the case of not having any filters, we act as a no-op... passing everything.
+        if (this.filters.length === 0 ) {
+            return true;
+        }
+
         for (let filter of this.filters) {
             if (!filter.match_session(sess)) {
                 return false;
@@ -158,6 +168,11 @@ export class CombinedAnyFilter extends CombinedFilter {
     }
 
     match( movie: MovieListing ) : boolean {
+        // in the case of not having any filters, we act as a no-op... passing everything.
+        if (this.filters.length === 0 ) {
+            return true;
+        }
+
         for( let filter of this.filters ) {
             // Any filters may match, so the first filter that does match ends in a match.
             if (filter.match(movie)) {
@@ -169,6 +184,11 @@ export class CombinedAnyFilter extends CombinedFilter {
     }
 
     match_session(sess: Session): boolean {
+        // in the case of not having any filters, we act as a no-op... passing everything.
+        if (this.filters.length === 0 ) {
+            return true;
+        }
+
         for (let filter of this.filters) {
             if (filter.match_session(sess)) {
                 return true;
