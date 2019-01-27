@@ -9,7 +9,7 @@
 				<span class="movie-rating">{{ movie.movie.Rated }}</span>
 			</div>
 			<div class="movie-sessions">
-				<movie-time v-for="session in todaysSessions" :session="session"></movie-time>
+				<movie-time v-for="session in active_sessions" :session="session"></movie-time>
 			</div>
 		</div>
 	</div>
@@ -18,31 +18,17 @@
 <script lang="ts">
     import Vue from "vue";
     import Component from 'vue-class-component';
-    import { Prop } from 'vue-property-decorator';
+    import {Prop} from 'vue-property-decorator';
 
     import MovieTime from './MovieTime.vue';
+    import {MovieListing, Session} from "./util/types";
 
     @Component({
 	    components: { MovieTime }
     })
     export default class MovieEntry extends Vue {
-		@Prop() movie!: any;
-
-		get todaysSessions() {
-		    let today = new Date(Date.now()).toDateString();
-		    return this.movie.sessions.filter( session => {
-				let session_time = new Date( session.time );
-			    if (session_time.toDateString() == today)
-			    {
-			        return true;
-			    }
-			    return false;
-		    } )
-		}
+		@Prop() movie!: MovieListing;
+		@Prop() active_sessions!: Session[];
 
     }
 </script>
-
-<style scoped>
-
-</style>

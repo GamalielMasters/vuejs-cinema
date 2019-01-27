@@ -1,17 +1,20 @@
 <template>
 	<div :class="{ 'check-filter': true, 'active': checked }" v-on:click="onCheck">
 		<span class="checkbox"></span>
-		<span class="check-filter-title"><slot></slot></span>
+		<span class="check-filter-title">{{ filter.name }}</span>
 	</div>
 </template>
 
 <script lang="ts">
     import Vue from "vue";
-    import Component from 'vue-class-component';
+    import {Component, Prop} from 'vue-property-decorator';
+    import {Filter} from "./util/types";
 
-    @Component({})
+    @Component({
+    })
     export default class FilterCheckBox extends Vue {
-       checked : boolean = false;
+		@Prop() filter!: Filter;
+		checked : boolean = false;
 
         onCheck() {
             this.checked = !this.checked;
@@ -19,7 +22,3 @@
         }
     }
 </script>
-
-<style scoped>
-
-</style>
