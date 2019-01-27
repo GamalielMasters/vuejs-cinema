@@ -4,7 +4,7 @@ A (potentially filtered) list of movies.
 
 <template>
 	<div id="movie-list" v-if="filtered_movies.length > 0"><movie-entry v-for="movie in filtered_movies" :movie="movie" :active_sessions="filter_session(movie)"></movie-entry></div>
-	<div id="movie-list" v-else-if="movies.length > 0"><div class="no-results"><p>No Movies matching {{ filter.map( a => { return a.name } ).join(", ") }}.  Please remove some criteria. </p></div></div>
+	<div id="movie-list" v-else-if="movies.length > 0"><div class="no-results"><p>No Movies matching {{ filter.name }}.  Please remove some criteria. </p></div></div>
 	<div id="movie-list" v-else><div class="no-results">Loading movie list... please wait.</div></div>
 </template>
 
@@ -22,7 +22,7 @@ A (potentially filtered) list of movies.
 	    components: { MovieEntry }
     })
     export default class MovieList extends Vue {
-        @Prop() filter!: Filter[];
+        @Prop() filter!: Filter;
 	    movies : MovieListing[] = [];
 
 	    FetchMovies() : void {
@@ -34,11 +34,7 @@ A (potentially filtered) list of movies.
         }
 
         get filtered_movies() : MovieListing[] {
-			let movie_list: MovieListing[] = this.movies;
-			for( let fil of this.filter ) {
-				movie_list = movie_list.filter( movie => {return fil.match( movie )});
-			}
-			return movie_list
+	        return this.movies.filter( movie => { return this.filter.match(movie) } )
 		}
 
 		filter_session( movie: MovieListing ) {
@@ -49,11 +45,9 @@ A (potentially filtered) list of movies.
 				return moment.utc(session.time).isSame( today, 'day');
 			});
 
-			for( let fil of this.filter ){
-				sessions = sessions.filter( session => {
-					return fil.match_session( session )
-				} )
-			}
+			sessions = sessions.filter( session => {
+			    return this.filter.match_session(session);
+			});
 
 			return sessions;
 		}

@@ -11,7 +11,6 @@ class TimeFilter implements Filter {
     match( movie: MovieListing ) : boolean {
         for( let sess of movie.sessions ) {
             let time = moment.utc(sess.time);
-            console.log( time.toString(), moment.utc().toString(), time.isSame(moment()));
             if (time.isSame( moment.utc(), 'day' ) && this.check_time(sess)) {
                 return true;
             }
@@ -94,7 +93,92 @@ class RatingFilter implements Filter {
     }
 }
 
-let GenreFilters = [
+
+class CombinedFilter implements Filter {
+    filters : Filter[] = [];
+
+    add( filter: Filter ) {
+        this.filters.push( filter );
+    }
+
+    remove( filter: Filter ){
+        let index = this.filters.indexOf( filter );
+        if (index > -1) {
+            this.filters.splice( index, 1);
+        }
+    }
+
+    get name() : string {
+        return "Combined Filter Base-class"
+    }
+
+    match(movie: MovieListing): boolean {
+        return false;
+    }
+
+    match_session(sess: Session): boolean {
+        return false;
+    }
+}
+
+
+export class CombinedAllFilter extends CombinedFilter {
+
+    get name(): string{
+        let inner = this.filters.map( a => { return a.name });
+        return "All Of [" + inner.join( ", " ) + "]"
+    }
+
+    match( movie: MovieListing ) : boolean {
+        for( let filter of this.filters ) {
+            // All filters must match to result in a match, so the first filter that does *not* match ends in a non-match.
+            if (!filter.match(movie)) {
+                return false;
+            }
+        }
+        // All the filters matched.
+        return true;
+    }
+
+    match_session(sess: Session): boolean {
+        for (let filter of this.filters) {
+            if (!filter.match_session(sess)) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+
+
+export class CombinedAnyFilter extends CombinedFilter {
+    get name(): string{
+        let inner = this.filters.map( a => { return a.name });
+        return "Any Of [" + inner.join( ", " ) + "]"
+    }
+
+    match( movie: MovieListing ) : boolean {
+        for( let filter of this.filters ) {
+            // Any filters may match, so the first filter that does match ends in a match.
+            if (filter.match(movie)) {
+                return true;
+            }
+        }
+        // None of the filters matched.
+        return false;
+    }
+
+    match_session(sess: Session): boolean {
+        for (let filter of this.filters) {
+            if (filter.match_session(sess)) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
+export const GenreFilters = [
     new GenreFilter( "Animation", "Animation" ),
     new GenreFilter( "Comedy", "Comedy" ),
     new GenreFilter( "Crime", "Crime" ),
@@ -105,17 +189,15 @@ let GenreFilters = [
 ];
 
 
-let TimeFilters = [
+export const TimeFilters = [
     new MatineeShowing(),
     new EveningShowing()
 ];
 
 
-let RatingFilters = [
+export const RatingFilters = [
     new RatingFilter( "G", "G" ),
     new RatingFilter( "PG", "PG"),
     new RatingFilter( "PG-13", "PG-13"),
     new RatingFilter( "R", "R" )
 ];
-
-export { GenreFilters, TimeFilters, RatingFilters }
