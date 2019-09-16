@@ -3,7 +3,13 @@ A (potentially filtered) list of movies.
 -->
 
 <template>
-	<div id="movie-list" v-if="filtered_movies.length > 0"><movie-entry v-for="movie in filtered_movies" :movie="movie" :active_sessions="filter_session(movie)"></movie-entry></div>
+	<div id="movie-list" v-if="filtered_movies.length > 0">
+		<movie-entry v-for="movie in filtered_movies" :movie="movie">
+			<div class="movie-sessions">
+				<movie-time v-for="session in filter_session(movie)" :session="session"></movie-time>
+			</div>
+		</movie-entry>
+	</div>
 	<div id="movie-list" v-else-if="movies.length > 0"><div class="no-results"><p>No Movies matching {{ filter.name }}.  Please remove some criteria. </p></div></div>
 	<div id="movie-list" v-else><div class="no-results">Loading movie list... please wait.</div></div>
 </template>
@@ -16,21 +22,15 @@ A (potentially filtered) list of movies.
     import {Filter, MovieListing} from "./util/types";
 
     import MovieEntry from './MovieEntry.vue';
+    import MovieTime from './MovieTime.vue';
 
     @Component({
-	    components: { MovieEntry }
+	    components: { MovieEntry, MovieTime },
     })
     export default class MovieList extends Vue {
         @Prop() filter!: Filter;
-	    movies : MovieListing[] = [];
+        @Prop( { default: [] } ) movies !: MovieListing[];
 
-	    FetchMovies() : void {
-            this.$http.get('/api/').then(
-                (results) => {
-                    this.movies = (<any>results).body;
-                }
-            );
-        }
 
         get filtered_movies() : MovieListing[] {
 	        return this.movies.filter( movie => { return this.filter.match(movie) } )
@@ -42,8 +42,5 @@ A (potentially filtered) list of movies.
             });
 		}
 
-        mounted() {
-            this.FetchMovies();
-        }
     }
 </script>

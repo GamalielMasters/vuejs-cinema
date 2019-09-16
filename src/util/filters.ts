@@ -95,7 +95,12 @@ class RatingFilter implements Filter {
 
 
 export class CombinedFilter implements Filter {
+    my_name : string;
     filters : Filter[] = [];
+
+    constructor( name: string ) {
+        this.my_name = name
+    }
 
     add( filter: Filter ) {
         this.filters.push( filter );
@@ -109,7 +114,7 @@ export class CombinedFilter implements Filter {
     }
 
     get name() : string {
-        return "Combined Filter Base-class"
+        return "Combined Filter " + this.my_name
     }
 
     match(movie: MovieListing): boolean {
@@ -126,7 +131,7 @@ export class CombinedAllFilter extends CombinedFilter {
 
     get name(): string{
         let inner = this.filters.map( a => { return a.name });
-        return "All Of [" + inner.join( ", " ) + "]"
+        return inner.length ? `${this.my_name} [` + inner.join( " and " ) + "] " : `Any ${this.my_name}`
     }
 
     match( movie: MovieListing ) : boolean {
@@ -164,7 +169,7 @@ export class CombinedAllFilter extends CombinedFilter {
 export class CombinedAnyFilter extends CombinedFilter {
     get name(): string{
         let inner = this.filters.map( a => { return a.name });
-        return "Any Of [" + inner.join( ", " ) + "]"
+        return inner.length ? `${this.my_name} [` + inner.join( " or " ) + "]" : `Any ${this.my_name}`
     }
 
     match( movie: MovieListing ) : boolean {
@@ -203,7 +208,15 @@ export class DateFilter implements Filter {
     currentDay: Moment = moment.utc();
 
     get name() : string {
-        return "Today";
+        if (this.currentDay.isSame(moment.utc(), 'day')) {
+            return "Showing Today"
+        } else if (this.currentDay.isSame(moment.utc().add(1, 'day'), 'day'))
+        {
+            return "Showing Tomorrow"
+        } else
+        {
+            return "Showing on " + this.currentDay.format("dddd, MMMM Do YYYY");
+        }
     }
 
     match(movie: MovieListing): boolean {

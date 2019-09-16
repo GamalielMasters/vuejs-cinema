@@ -1,16 +1,18 @@
 <template>
 	<div class="movie">
 		<div class="movie-col-left">
-			<img :src="movie.movie.Poster" alt="Movie Poster">
+			<router-link :to="{name: 'movie', params: { movie_id:movie.id }}">
+				<img :src="movie.movie.Poster" alt="Movie Poster">
+			</router-link>
 		</div>
 		<div class="movie-col-right">
 			<div class="movie-title">
-				<h2> {{ movie.movie.Title }} </h2>
+				<router-link :to="{name: 'movie', params: { movie_id:movie.id }}">
+					<h2> {{ movie.movie.Title }} </h2>
+				</router-link>
 				<span class="movie-rating">{{ movie.movie.Rated }}</span>
 			</div>
-			<div class="movie-sessions">
-				<movie-time v-for="session in active_sessions" :session="session"></movie-time>
-			</div>
+			<slot></slot>
 		</div>
 	</div>
 </template>
@@ -19,16 +21,10 @@
     import Vue from "vue";
     import Component from 'vue-class-component';
     import {Prop} from 'vue-property-decorator';
+    import {MovieListing} from "./util/types";
 
-    import MovieTime from './MovieTime.vue';
-    import {MovieListing, Session} from "./util/types";
-
-    @Component({
-	    components: { MovieTime }
-    })
+    @Component({})
     export default class MovieEntry extends Vue {
 		@Prop() movie!: MovieListing;
-		@Prop() active_sessions!: Session[];
-
     }
 </script>
